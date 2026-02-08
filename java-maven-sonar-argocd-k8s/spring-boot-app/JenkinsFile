@@ -51,23 +51,7 @@ pipeline {
             GIT_USER_NAME = "KunusothNithin"
         }
         steps {
-            withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-               stage('Update Deployment File') {
-    environment {
-        GIT_REPO_NAME = "Jenkins-CICD-Project"
-        GIT_USER_NAME = "KunusothNithin"
-    }
-    steps {
-        // Make sure the repo is checked out first
-        checkout([$class: 'GitSCM',
-                  branches: [[name: '*/main']],
-                  userRemoteConfigs: [[
-                      url: "https://github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git",
-                      credentialsId: 'github'
-                  ]]
-        ])
-        
-        withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+          withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
             dir("${WORKSPACE}") { // Ensure we're in the root of the repo
                 sh '''
                     git config user.email "nithinkunusoth4u@gmail.com"
@@ -83,6 +67,7 @@ pipeline {
 
             }
         }
+      }
     }
   }
 }
