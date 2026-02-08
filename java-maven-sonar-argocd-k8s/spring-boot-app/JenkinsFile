@@ -54,16 +54,28 @@ pipeline {
           withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
             dir("${WORKSPACE}") { // Ensure we're in the root of the repo
                 sh '''
+                    # Debug info
+                    echo "Current directory: $(pwd)"
+                    echo "Git repo root: $(git rev-parse --show-toplevel || echo 'Not a git repo')"
+
+                    # Configure Git user locally
                     git config user.email "nithinkunusoth4u@gmail.com"
                     git config user.name "Kunusoth Nithin"
 
-                    BUILD_NUMBER=${BUILD_NUMBER}
+                    # Update deployment file with current build number
                     sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-k8s/spring-boot-app-manifests/deployment.yml
 
+                    # Stage changes locally
                     git add java-maven-sonar-argocd-k8s/spring-boot-app-manifests/deployment.yml
-                    git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-                    git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+
+                    # Optional: commit & push to GitHub
+                    # git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+                    # git push https://${GITHUB_TOKEN}@github.com/KunusothNithin/Jenkins-CICD-Project HEAD:main
+
+                    # Show staged changes
+                    git status
                 '''
+
 
             }
         }
